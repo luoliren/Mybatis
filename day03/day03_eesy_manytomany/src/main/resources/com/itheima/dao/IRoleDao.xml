@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.itheima.dao.IRoleDao">
+
+    <!--定义role表的resultMap-->
+    <!--windows不区分数据库字段名的大小写  Linux区分大小写  如果sql语句中有别名 则需要在配置resultMap中修改 -->
+    <resultMap id="roleMap" type="role">
+        <id column="rid" property="roleId"></id>
+        <result property="roleName" column="role_name"></result>
+        <result column="role_desc" property="roleDesc"></result>
+        <collection property="users" ofType="user">
+            <id property="id" column="id"></id>
+            <result column="username" property="username"></result>
+            <result column="address" property="address"></result>
+            <result column="sex" property="sex"></result>
+            <result column="birthday" property="birthday"></result>
+        </collection>
+    </resultMap>
+    <!--查询所有--><!--起的别名 不会影响sql语句的条件，应使用原来的字段名-->
+    <select id="findAll" resultMap="roleMap">
+        select u.*,r.id as rid,r.role_desc from role r left
+        outer join user_role ur on r.id = ur.rid
+        left outer join user u  on u.id = ur.uid
+    </select>
+
+</mapper>
