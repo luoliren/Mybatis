@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace 写的是dao的接口路径-->
+<mapper namespace="com.itheima.dao.IAccountDao">
+        <!-- 定义封装account和user的resultMap-->
+    <!--resultMap里面放的是表的字段和namespace属性的映射-->
+    <!--id 是接口的名字 type是实体类的路径-->
+    <resultMap id="accountUserMap" type="account">
+        <!--id 是放主键的 property 是实体类中属性的名字 column是数据库中的主键 因为在查询语句中起了别名，所以用别名-->
+        <id property="id" column="id"></id>
+        <result column="uid" property="uid"></result>
+        <result column="money" property="money"></result>
+        <!-- association用来关联对象(用于多对一,或一对一)，property代表加载对象，javaType代表加载对象的数据类型-->
+        <!--一对一关系的映射，配置封装user的内容 column是查询条件中的主关联表account表中的字段名 column中指名从表的外键 javatype是被关联表中的实体类-->
+        <!--select属性指定的内容：查询用户的唯一表示-->
+        <!--column属性指定的内容：用户根据id查询，所需要的参数的值-->
+        <association property="user" column="uid" javaType="user" select="com.itheima.dao.IUserDao.findById"></association>
+    </resultMap>
+    <select id="findAll" resultMap="accountUserMap">
+        select * from account ;
+        </select>
+    <!--查询所有同时包含用户名和地址信息-->
+    <select id="findAllAccount" resultType="accountUser">
+        select a.*,u.username,u.address from account a,user u where u.id = a.uid;
+    </select>
+    <!--根据用户的id查询账户列表-->
+    <select id="findAccountByUid" resultType="account">
+        select * from account where uid = #{uid} ;
+        </select>
+</mapper>
